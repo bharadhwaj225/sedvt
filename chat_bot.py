@@ -1,6 +1,11 @@
+# **For Deploying on Render**
 import requests
 import streamlit as st
 from streamlit.components.v1 import html
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Initialize the Groq client
 def init_groq_client(api_key, api_url):
@@ -10,11 +15,11 @@ def init_groq_client(api_key, api_url):
     }
 
 # Function to get responses from Groq API
-def get_groq_response(prompt, model="mixtral-8x7b-32768", api_key=None, api_url=None):
+def get_groq_response(prompt, model="mixtral-8x7b-32768",api_key=None, api_url=None):
     if not api_key:
-        api_key = st.secrets["GROQ_API_KEY"]
+        api_key = os.environ.get("GROQ_API_KEY")
     if not api_url:
-        api_url = st.secrets["GROQ_API_URL"]
+        api_url = os.environ.get("GROQ_API_URL")
 
     headers = {
         "Authorization": f"Bearer {api_key}",

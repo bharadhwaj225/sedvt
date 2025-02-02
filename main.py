@@ -1,6 +1,15 @@
 import streamlit as st
 
-
+st.markdown("""
+    <style>
+            ._container_gzau3_1 _viewerBadge_nim44_23 {
+                visibility:hidden;
+            }
+            ._profileContainer_gzau3_53 {
+                visibility:hidden;
+            }
+    </style>
+""", unsafe_allow_html=True)
 
 landing_page = st.Page(
     page="views/home_page.py",

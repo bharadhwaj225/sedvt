@@ -89,7 +89,7 @@ def create_map(column_name):
     return m
 
 # Create maps for selected columns
-columns_to_map = ['2011-12-INC', '2011-LIT', '2011-POP', '2011-SEX_RATIO', '2011-UNEMP', '2011-Poverty']
+columns_to_map = ['2011-12-INCOME', '2011-LITERACY_RATE', '2011-POPULATION', '2011-SEX_RATIO', '2011-UNEMPLOYMENT_RATE', '2011-POVERTY']
 for col in columns_to_map:
     st.subheader(f"Geographic Mapping for {col}")
     m = create_map(col)

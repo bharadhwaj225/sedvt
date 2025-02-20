@@ -50,7 +50,7 @@ st.subheader("⚙️ Data Preprocessing & Model Training")
 test_size = st.slider("Select Train-Test Split Ratio:", 0.1, 0.5, 0.2, 0.05)
 
 # Define Features & Target
-target_column = "2011-12-INC"  # Define prediction target
+target_column = "2011-12-INCOME"  # Define prediction target
 X = df.drop(columns=["States_UnionTerritories", target_column])
 y = df[target_column]
 

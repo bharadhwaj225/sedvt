@@ -22,9 +22,19 @@ data_prediction = st.Page(
     icon=":material/calculate:",
 )
 assistance_page = st.Page(
-    page="views/assistance.py",
-    title="Assistance Page",
+    page="views/assistance_page.py",
+    title="Assistance",
     icon=":material/live_help:",
+)
+trend_analysis_page = st.Page(
+    page="views/trend_analysis.py",
+    title="Trend Analysis",
+    icon=":material/insights:",
+)
+state_comparison_page = st.Page(
+    page="views/state_comparison.py",
+    title="State Comparison",
+    icon=":material/compare:",
 )
 chatbot_page = st.Page(
     page="chat_bot.py",
@@ -36,6 +46,7 @@ pg = st.navigation(
     {
         "Home": [landing_page],
         "Pages": [geographical_page, data_preparation, data_prediction, assistance_page],
+        "Trend Insights": [trend_analysis_page,state_comparison_page],
         "Live Chat": [chatbot_page],
     }
 )

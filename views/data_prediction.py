@@ -29,16 +29,16 @@ st.write(df)
 
 st.subheader("📊 Poverty Data for 2001 and 2011")
 fig, ax = plt.subplots(figsize=(10, 5))
-df.set_index('States_UnionTerritories')[['2001-Poverty', '2011-Poverty']].plot(kind='bar', ax=ax, color=['blue', 'red'])
+df.set_index('States_UnionTerritories')[['2001-POVERTY', '2011-POVERTY']].plot(kind='bar', ax=ax, color=['blue', 'red'])
 ax.set_ylabel("Poverty Rate (%)")
 st.pyplot(fig)
 
 # Feature Correlation
 st.subheader("🔍 Relationship Between Poverty & Other Socio-Economic Factors")
-features = ['2001-LIT', '2011-LIT', '2001-UNEMP', '2011-UNEMP']
+features = ['2001-LITERACY_RATE', '2011-LITERACY_RATE', '2001-UNEMPLOYMENT_RATE', '2011-UNEMPLOYMENT_RATE']
 for feature in features:
     fig, ax = plt.subplots(figsize=(6, 4))
-    sns.scatterplot(data=df, x=feature, y='2011-Poverty', ax=ax, color="teal")
+    sns.scatterplot(data=df, x=feature, y='2011-POVERTY', ax=ax, color="teal")
     ax.set_title(f"{feature} vs 2011 Poverty Rate")
     st.pyplot(fig)
 
@@ -47,19 +47,19 @@ st.subheader("🤖 Predictive Analytics")
 st.write("🔹 Training models to predict **2021 & 2031 Poverty Rates**")
 
 # Train Model for 2021
-X_2021 = df[['2001-Poverty', '2011-Poverty', '2011-LIT', '2011-UNEMP']]
-y_2021 = df['2011-Poverty']
+X_2021 = df[['2001-POVERTY', '2011-POVERTY', '2011-LITERACY_RATE', '2011-UNEMPLOYMENT_RATE']]
+y_2021 = df['2011-POVERTY']
 
 X_train_2021, X_test_2021, y_train_2021, y_test_2021 = train_test_split(X_2021, y_2021, test_size=0.2, random_state=42)
 
 model_2021 = make_pipeline(PolynomialFeatures(degree=2), LinearRegression())
 model_2021.fit(X_train_2021, y_train_2021)
 
-df['Predicted 2021-Poverty'] = model_2021.predict(X_2021)
+df['Predicted 2021-POVERTY'] = model_2021.predict(X_2021)
 
 # Train Model for 2031 using 2021 Predictions
-X_2031 = df[['2001-Poverty', '2011-Poverty', 'Predicted 2021-Poverty', '2011-LIT', '2011-UNEMP']]
-y_2031 = df['2011-Poverty']  # Using 2011 as a proxy for training (since we don't have 2021 actuals)
+X_2031 = df[['2001-POVERTY', '2011-POVERTY', 'Predicted 2021-POVERTY', '2011-LITERACY_RATE', '2011-UNEMPLOYMENT_RATE']]
+y_2031 = df['2011-POVERTY']  # Using 2011 as a proxy for training (since we don't have 2021 actuals)
 
 X_train_2031, X_test_2031, y_train_2031, y_test_2031 = train_test_split(X_2031, y_2031, test_size=0.2, random_state=42)
 
@@ -69,7 +69,7 @@ model_2031.fit(X_train_2031, y_train_2031)
 df['Predicted 2031-Poverty'] = model_2031.predict(X_2031)
 
 # st.write(df[['States_UnionTerritories', 'Predicted 2021-Poverty', 'Predicted 2031-Poverty']])
-st.write(df[['States_UnionTerritories', 'Predicted 2021-Poverty']])
+st.write(df[['States_UnionTerritories', 'Predicted 2021-POVERTY']])
 
 # Model Performance
 y_pred_2021 = model_2021.predict(X_test_2021)
@@ -90,7 +90,7 @@ st.write(f"🔹 **MSE:** {mse_2031:.2f}, **R² Score:** {r2_2031:.4f}")
 # Fraud Detection (Anomalies in Poverty Rates)
 st.subheader("⚠️ Fraud Detection - Unusual Poverty Rates")
 fig, ax = plt.subplots(figsize=(8, 4))
-sns.boxplot(df['2011-Poverty'], ax=ax, color="red")
+sns.boxplot(df['2011-POVERTY'], ax=ax, color="red")
 ax.set_title("Poverty Rate Distribution (2011)")
 st.pyplot(fig)
 st.divider()
@@ -114,11 +114,11 @@ else:
     unemployment_2011 = st.number_input("Enter 2011 Unemployment Rate:", value=5.0, min_value=0.0, max_value=100.0)
 
 # input_data_2021 = np.array([[poverty_2001, poverty_2011, literacy_2011, unemployment_2011]])
-input_data_2021 = pd.DataFrame([[poverty_2001, poverty_2011, literacy_2011, unemployment_2011]], columns=['2001-Poverty', '2011-Poverty', '2011-LIT', '2011-UNEMP'])
+input_data_2021 = pd.DataFrame([[poverty_2001, poverty_2011, literacy_2011, unemployment_2011]], columns=['2001-POVERTY', '2011-POVERTY', '2011-LITERACY_RATE', '2011-UNEMPLOYMENT_RATE'])
 predicted_2021 = model_2021.predict(input_data_2021)
 
 # input_data_2031 = np.array([[poverty_2001, poverty_2011, predicted_2021[0], literacy_2011, unemployment_2011]])
-input_data_2031 = pd.DataFrame([[poverty_2001, poverty_2011, predicted_2021[0], literacy_2011, unemployment_2011]], columns=['2001-Poverty', '2011-Poverty', 'Predicted 2021-Poverty', '2011-LIT', '2011-UNEMP'])
+input_data_2031 = pd.DataFrame([[poverty_2001, poverty_2011, predicted_2021[0], literacy_2011, unemployment_2011]], columns=['2001-POVERTY', '2011-POVERTY', 'Predicted 2021-POVERTY', '2011-LITERACY_RATE', '2011-UNEMPLOYMENT_RATE'])
 predicted_2031 = model_2031.predict(input_data_2031)
 
 if st.button("Predict"):

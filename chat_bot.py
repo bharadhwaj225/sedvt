@@ -1,77 +1,77 @@
-# **For Deploying on Render**
-import requests
 import streamlit as st
-from streamlit.components.v1 import html
+import pandas as pd
+import requests
 import os
 from dotenv import load_dotenv
 
+# Load environment variables
 load_dotenv()
 
-# Initialize the Groq client
-def init_groq_client(api_key, api_url):
-    return {
-        "api_key": api_key,
-        "api_url": api_url
-    }
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
-# Function to get responses from Groq API
-def get_groq_response(prompt, model="mixtral-8x7b-32768",api_key=None, api_url=None):
-    if not api_key:
-        api_key = os.environ.get("GROQ_API_KEY")
-    if not api_url:
-        api_url = os.environ.get("GROQ_API_URL")
+if not GROQ_API_KEY:
+    st.error("API Key not found! Check your .env file.")
+    st.stop()
 
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
-    data = {
-        "model": model,
-        "messages": [{
-            "role": "user",
-            "content": prompt
-        }],
-        "temperature": 0.7
-    }
+CSV_FILE_PATH = "data/data.csv"
 
-    response = requests.post(
-        api_url,
-        headers=headers,
-        json=data
-    )
+@st.cache_data
+def load_data():
+    return pd.read_csv(CSV_FILE_PATH)
 
-    if response.status_code == 200:
-        return response.json()["choices"][0]["message"]["content"]
-    else:
-        return f"Error: {response.status_code}"
+df = load_data()
+csv_data_text = df.to_string()
 
-# Streamlit app
-st.title("💬 AI Chatbot - Poverty Combat Assistance")
-st.write("Ask me anything about unemployment solutions, addressing poverty, aid programs, or donations!")
-
-# Initialize chat history
+# Initialize session state
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Display chat history
-for i, message in enumerate(st.session_state.messages):
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+# Main UI
+st.title("AI Powered Chatbot")
+st.write(  
+    "Welcome to the AI Powered Chatbot.\n"
+    "Simply ask a question, and the AI will analyze the data for you. Whether you're exploring trends,\t"  
+    "finding key statistics, or understanding relationships, this chatbot is here to assist you.\n\n "  
+    "Start by typing your query below! 💡"  
+)
 
-# Handle user input
-if prompt := st.chat_input("What would you like to discuss?"):
-    # Display user message
-    with st.chat_message("user"):
-        st.markdown(prompt)
+
+# Chat History
+chat_container = st.container()
+with chat_container:
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+if prompt := st.chat_input("Ask a question..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Get response from Groq
-    with st.chat_message("assistant"):
-        # st.markdown("Think")
-        response = get_groq_response(prompt)
-        st.markdown(response)
-    st.session_state.messages.append({"role": "assistant", "content": response})
+    # Handle greetings separately
+    greetings = ["hi", "hello", "hey", "greetings"]
+    if prompt.lower() in greetings:
+        reply = "Hello! 😊 Would you like to ask a specific question or explore the data further? I'm here to help!"
+        st.session_state.messages.append({"role": "assistant", "content": reply})
+        st.rerun()
 
-# Add loading spinner
-with st.spinner("Processing your request..."):
-    pass
+    # API Request
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "model": "llama3-8b-8192",
+        "messages": [
+            {"role": "system", "content": f"Use this dataset:\n{csv_data_text}"},
+        ] + st.session_state.messages
+    }
+
+    response = requests.post(GROQ_API_URL, headers=headers, json=data)
+
+    if response.status_code == 200:
+        reply = response.json()["choices"][0]["message"]["content"]
+        st.session_state.messages.append({"role": "assistant", "content": reply})
+        st.rerun()
+    else:
+        st.error(f"⚠️ API Error: {response.text}")

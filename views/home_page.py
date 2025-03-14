@@ -1,7 +1,7 @@
 import streamlit as st
 
 st.set_page_config(layout="wide")
-st.title("Socio-Economic Data Visualization Tool")
+st.title("AI-Powered Socio-Economic Data Visualization and Predictive Analytics Tool")
 st.divider()
 
 st.markdown("""

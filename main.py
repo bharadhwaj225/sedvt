@@ -6,6 +6,11 @@ landing_page = st.Page(
     icon=":material/home:",
     default=True,
 )
+interactive_dashboard = st.Page(
+    page="views/interactive_dashboard.py",
+    title="Interactive Dashboard",
+    icon=":material/dashboard:",
+)
 geographical_page = st.Page(
     page="views/geographical_data.py",
     title="Geographical Data",
@@ -41,13 +46,20 @@ chatbot_page = st.Page(
     title="AI Chatbot",
     icon=":material/chat:",
 )
+feedback_page = st.Page(
+    page="views/feedback_page.py",
+    title="Help Us Improve Our Data!",
+    icon=":material/sentiment_satisfied:",
+)
+
 # pg = st.navigation(pages=[landing_page, geographical_page])
 pg = st.navigation(
     {
         "Home": [landing_page],
-        "Pages": [geographical_page, data_preparation, data_prediction, assistance_page],
+        "Pages": [interactive_dashboard, geographical_page, data_preparation, data_prediction, assistance_page],
         "Trend Insights": [trend_analysis_page,state_comparison_page],
         "Live Chat": [chatbot_page],
+        "Feedback": [feedback_page],
     }
 )
 
